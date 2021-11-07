@@ -5,7 +5,7 @@ import Header from "./header"
 import Inputs from "./inputs";
 import Todo from "./todo";
 import Inputs2 from './inputs/index2'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 interface arrays {
     important: boolean,
@@ -20,13 +20,13 @@ const Parent = () => {
         let jsonValue:any;
         const start = async () => {
             try {
-                jsonValue = await AsyncStorage.getItem('Todo_key')
-                jsonValue != null ? JSON.parse(jsonValue) : null;
+                jsonValue = await SecureStore.getItemAsync('Todo_key')
+                let final = JSON.parse(jsonValue)
                 console.log(jsonValue)
-                if(jsonValue == null && jsonValue == undefined) setTodos([])
-                else setTodos(jsonValue)
+                if(final == null && final == undefined) setTodos([])
+                else setTodos(final)
             } catch (e) {
-                alert(e)
+                setTodos([])
                 console.log(e)
             }
         }
@@ -71,7 +71,7 @@ const Parent = () => {
     const save = async (todo: Array<arrays>) => {
         try {
             const jsonValue = JSON.stringify(todo)
-            await AsyncStorage.setItem('Todo_key', jsonValue)
+            await SecureStore.setItemAsync('Todo_key', jsonValue)
         } catch (e) {
             alert('не удалось сохранить данные')
         }
